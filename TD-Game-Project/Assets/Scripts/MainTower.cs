@@ -4,37 +4,21 @@ using UnityEngine;
 
 public class MainTower : MonoBehaviour
 {
-    /*
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
-    void Update()
-    {
-        //Get the Screen positions of the object
-        Vector2 positionOnScreen = Camera.main.WorldToViewportPoint( transform.position );
-
-        //Get the Screen position of the mouse
-        Vector2 mouseOnScreen = (Vector2)Camera.main.ScreenToViewportPoint( Input.mousePosition );
-
-        //Get the angle between the points
-        float angle = AngleBetweenTwoPoints( positionOnScreen, mouseOnScreen );
-
-        //Ta Daaa
-        transform.rotation = Quaternion.Euler( new Vector3( 0.0f, -angle, 0.0f  ) );
-
-    }
-
-    float AngleBetweenTwoPoints( Vector3 a, Vector3 b )
-    {
-        return Mathf.Atan2( a.y - b.y, a.x - b.x ) * Mathf.Rad2Deg;
-    }
-    */
-
     // speed is the rate at which the object will rotate
-    public float speed;
+    public float rotationSpeed          = 25.0f;
+    public float bulletOffsetFromGunOnZ = 0.17f;
+    public float bulletOffsetFromGunOnX = 0.005f;
+    
+    public Rigidbody mainBulletPrefab;
+
+
+    private void Update()
+    {
+        if( Input.GetButtonDown( "Fire1" ) )
+        {
+            FireMainBullet();
+        }
+    }
 
     void FixedUpdate()
     {
@@ -60,8 +44,18 @@ public class MainTower : MonoBehaviour
             Quaternion targetRotation = Quaternion.LookRotation( targetPoint - transform.position );
 
             // Smoothly rotate towards the target point.
-            transform.rotation = Quaternion.Slerp( transform.rotation, targetRotation, speed * Time.deltaTime );
+            transform.rotation = Quaternion.Slerp( transform.rotation, targetRotation, rotationSpeed * Time.deltaTime );
         }
+    }
+
+    void FireMainBullet()
+    {
+        // Make an empty game object in the editor and attach it to the tip of the gun.
+        // Use that GO position to instantiate the bullet
+
+        Transform bulletSpawnTransform = this.gameObject.transform.GetChild( 0 );
+        
+        Instantiate( mainBulletPrefab, bulletSpawnTransform.position, transform.rotation );
     }
 
 }
