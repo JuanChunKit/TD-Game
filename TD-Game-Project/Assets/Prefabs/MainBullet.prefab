@@ -112,8 +112,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b57ee1042529f3b4bab59378b2cbc216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxAliveTime: 60
-  bulletSpeed: 1
+  maxAliveTime: 5
+  bulletSpeed: 1.5
   printInfo: 0
 --- !u!135 &135553822577830232
 SphereCollider:

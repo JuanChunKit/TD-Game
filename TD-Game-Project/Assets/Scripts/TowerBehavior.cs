@@ -7,9 +7,15 @@ public class TowerBehavior : MonoBehaviour {
 	public Material normalColor;
 	public Material FlashColor;
 
+	private void Awake()
+	{
+		GetComponent<Renderer>().material.CopyPropertiesFromMaterial( normalColor );
+	}
+
 	private void OnCollisionEnter( Collision collision )
 	{
-		StartCoroutine( FlashBack() );
+		if( collision.gameObject.tag == "Bullet ")
+			StartCoroutine( FlashBack() );
 	}
 
 	IEnumerator FlashBack()

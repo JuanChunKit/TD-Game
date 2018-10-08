@@ -112,7 +112,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdb0f0649c65aa04f937ddf56214baa8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1
+  speed: 0.5
   groundOffset: 0.3
   enemyOffset: 0.6
 --- !u!136 &136404147387178250
