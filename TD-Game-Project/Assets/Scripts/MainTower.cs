@@ -6,11 +6,14 @@ public class MainTower : MonoBehaviour
 {
     // speed is the rate at which the object will rotate
     public float rotationSpeed          = 25.0f;
-    public float bulletOffsetFromGunOnZ = 0.17f;
-    public float bulletOffsetFromGunOnX = 0.005f;
     
     public Rigidbody mainBulletPrefab;
-
+    
+    /*
+    private void Start()
+    {
+    }
+    */
 
     private void Update()
     {
@@ -54,8 +57,8 @@ public class MainTower : MonoBehaviour
         // Use that GO position to instantiate the bullet
 
         Transform bulletSpawnTransform = this.gameObject.transform.GetChild( 0 );
-        
-        Instantiate( mainBulletPrefab, bulletSpawnTransform.position, transform.rotation );
+
+		Instantiate( mainBulletPrefab, bulletSpawnTransform.position, transform.rotation );
     }
 
 }
