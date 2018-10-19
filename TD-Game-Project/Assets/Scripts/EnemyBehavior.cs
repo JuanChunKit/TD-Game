@@ -13,6 +13,7 @@ public class EnemyBehavior : MonoBehaviour
 	public float enemyOffset = 1.0f;
 
 	private Vector3 targetLocation;
+	private float health;
 
 	// Use this for initialization
 	void Start()
@@ -22,6 +23,8 @@ public class EnemyBehavior : MonoBehaviour
 
 		transform.position = new Vector3( transform.position.x, groundOffset, transform.position.z );
 		targetLocation.y = groundOffset;
+
+		health = 1.0f;
 
 		// (task) Rotate the enemy to face the target
 	}
@@ -44,10 +47,24 @@ public class EnemyBehavior : MonoBehaviour
 
 	private void OnCollisionEnter( Collision collision )
 	{
+		/*
 		if( collision.gameObject.tag == "Bullet" )
 		{
 			GameMaster.Instance.currentScore += 10;
 			print( GameMaster.Instance.currentScore );
+			Destroy( gameObject );
+		}
+		*/
+	}
+
+	public void TakeDamage( float amount )
+	{
+		health -= amount;
+
+		if( health <= 0.0f )
+		{
+			// the enemy has taken fatal damage, kill him
+			//GameMaster.Instance.currentScore += 10;
 			Destroy( gameObject );
 		}
 	}
