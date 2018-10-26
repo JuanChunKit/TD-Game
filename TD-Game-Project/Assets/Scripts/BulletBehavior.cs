@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class BulletBehavior : MonoBehaviour
 {
+
+	private float bulletDamageForScaling	= 100.0f;
+	private float minBulletDamage			= 40.0f;
+	private float initialBulletScale;
 	public float bulletDamage;
 
 	public float maxAliveTime = 4.0f;
@@ -34,6 +38,10 @@ public class BulletBehavior : MonoBehaviour
 		// destroy the bullet after x amount of time to prevent it from leaking memory
 		Destroy( gameObject, maxAliveTime );
 
+		initialBulletScale = transform.localScale.x;
+		print( initialBulletScale );
+
+		MakeBomb();
 	}
 
 	// Update is called once per frame
@@ -42,14 +50,35 @@ public class BulletBehavior : MonoBehaviour
 		// Move the object forward along its z axis 
 		transform.Translate( transform.forward * bulletSpeed * Time.deltaTime, Space.World );
 
+		UpdateBulletStats( Time.deltaTime );
+
 		// Draw debug info
-		
 		float rayDrawDistance = 1.0f;
 		Debug.DrawRay( transform.position, rayDrawDistance * transform.forward, Color.blue, 0, false );   // z axis
 		Debug.DrawRay( transform.position, rayDrawDistance * transform.up,		Color.green, 0, false );  // y axis
 		Debug.DrawRay( transform.position, rayDrawDistance * transform.right,	Color.red, 0, false );    // x axis
 		Debug.DrawRay( transform.position, rayDrawDistance * direction,			Color.magenta, 0, false ); 
 		
+	}
+
+	private void UpdateBulletStats( float dt )
+	{
+		// Decay the bullet's damage over time
+		if( bulletDamage <= minBulletDamage )
+		{
+			return;
+		}
+
+		bulletDamage -= 20 * dt;
+
+		if( bulletDamage < minBulletDamage )
+		{
+			bulletDamage = minBulletDamage;
+		}
+
+		// Scale the bullet acording to its current damage
+		float newScale = (bulletDamage * initialBulletScale) / bulletDamageForScaling;
+		transform.localScale = new Vector3( newScale, newScale, newScale );
 	}
 
 	private void OnCollisionEnter( Collision collision )
@@ -72,7 +101,16 @@ public class BulletBehavior : MonoBehaviour
 		if( collision.gameObject.tag == "DuplicatorTower" )
 		{
 			if( isClone == false )
-				collision.gameObject.GetComponent<DuplicatorTower>().SpawnBullets();
+			{
+				collision.gameObject.GetComponent<DuplicatorTower>().DuplicateBullet( this.transform, bulletDamage );
+			}
+		}
+
+		if( collision.gameObject.tag == "StrBuffTower" )
+		{
+			print( bulletDamage );
+			bulletDamage += 40;
+			print( bulletDamage );
 		}
 
 		// Get the normal of the object we collided with
@@ -81,6 +119,16 @@ public class BulletBehavior : MonoBehaviour
 
 		// Figure out the angle between the reflection direction and the bullet's forward vector
 		float angle = Vector3.SignedAngle( direction, transform.forward, Vector3.up );
+		angle *= -1f;
+
+		// Rotate the bullet
+		transform.Rotate( Vector3.up, angle );
+	}
+
+	public void faceTowards( Vector3 newDirection )
+	{
+		// Figure out the angle between the reflection direction and the bullet's forward vector
+		float angle = Vector3.SignedAngle( newDirection, transform.forward, Vector3.up );
 		angle *= -1f;
 
 		// Rotate the bullet
