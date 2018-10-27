@@ -86,14 +86,16 @@ public class BulletBehavior : MonoBehaviour
 		if( collision.gameObject.tag == "Enemy" )
 		{
 			// deal normal bullet damage to the enemy
-			EnemyBehavior enemyScript = collision.gameObject.GetComponent<EnemyBehavior>();
-			enemyScript.TakeDamage( bulletDamage );
+			//EnemyBehavior enemyScript = collision.gameObject.GetComponent<EnemyBehavior>();
+			//enemyScript.TakeDamage( bulletDamage );
 
 			// Trigger explosion that damages enemies around the bomb
 			if( isBomb )
 			{
 				// spawn the explosion prefab and delete the bullet
-				Instantiate( explosionPrefab, transform.position, transform.rotation );
+				Instantiate( explosionPrefab, transform.position, transform.rotation 
+					).GetComponent<ExplosionBehavior>().SetExplosionPower( bulletDamage );
+
 				Destroy( gameObject );
 			}
 		}

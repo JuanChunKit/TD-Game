@@ -13,7 +13,7 @@ public class EnemyBehavior : MonoBehaviour
 	public float enemyOffset = 1.0f;
 
 	private Vector3 targetLocation;
-	private float health;
+	public float health;
 
 	// Use this for initialization
 	void Start()
@@ -24,7 +24,7 @@ public class EnemyBehavior : MonoBehaviour
 		transform.position = new Vector3( transform.position.x, groundOffset, transform.position.z );
 		targetLocation.y = groundOffset;
 
-		health = 1.0f;
+		health = 100.0f;
 
 		// (task) Rotate the enemy to face the target
 	}
