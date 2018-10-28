@@ -5,8 +5,8 @@ using UnityEngine;
 public class BulletBehavior : MonoBehaviour
 {
 
-	private float bulletDamageForScaling	= 100.0f;
-	private float minBulletDamage			= 40.0f;
+	private float bulletDamageForScaling    = 100.0f;
+	private float minBulletDamage           = 40.0f;
 	private float initialBulletScale;
 	public float bulletDamage;
 
@@ -19,10 +19,12 @@ public class BulletBehavior : MonoBehaviour
 
 	private Vector3 direction;
 
-	private bool isBomb = false;
+	private bool isBigBomb = false;
 	public Material bombMaterial;
 
 	public GameObject explosionPrefab;
+	public GameObject bigExplosionPrefab;
+
 	public bool isClone = false;
 
 	// Use this for initialization
@@ -40,8 +42,7 @@ public class BulletBehavior : MonoBehaviour
 
 		initialBulletScale = transform.localScale.x;
 		print( initialBulletScale );
-
-		MakeBomb();
+		
 	}
 
 	// Update is called once per frame
@@ -55,10 +56,10 @@ public class BulletBehavior : MonoBehaviour
 		// Draw debug info
 		float rayDrawDistance = 1.0f;
 		Debug.DrawRay( transform.position, rayDrawDistance * transform.forward, Color.blue, 0, false );   // z axis
-		Debug.DrawRay( transform.position, rayDrawDistance * transform.up,		Color.green, 0, false );  // y axis
-		Debug.DrawRay( transform.position, rayDrawDistance * transform.right,	Color.red, 0, false );    // x axis
-		Debug.DrawRay( transform.position, rayDrawDistance * direction,			Color.magenta, 0, false ); 
-		
+		Debug.DrawRay( transform.position, rayDrawDistance * transform.up, Color.green, 0, false );  // y axis
+		Debug.DrawRay( transform.position, rayDrawDistance * transform.right, Color.red, 0, false );    // x axis
+		Debug.DrawRay( transform.position, rayDrawDistance * direction, Color.magenta, 0, false );
+
 	}
 
 	private void UpdateBulletStats( float dt )
@@ -85,19 +86,23 @@ public class BulletBehavior : MonoBehaviour
 	{
 		if( collision.gameObject.tag == "Enemy" )
 		{
-			// deal normal bullet damage to the enemy
-			//EnemyBehavior enemyScript = collision.gameObject.GetComponent<EnemyBehavior>();
-			//enemyScript.TakeDamage( bulletDamage );
+			ExplosionBehavior newExplosion;
 
-			// Trigger explosion that damages enemies around the bomb
-			if( isBomb )
+			// spawn the explosion prefab and delete the bullet
+			if( isBigBomb )
 			{
-				// spawn the explosion prefab and delete the bullet
-				Instantiate( explosionPrefab, transform.position, transform.rotation 
-					).GetComponent<ExplosionBehavior>().SetExplosionPower( bulletDamage );
-
-				Destroy( gameObject );
+				newExplosion = Instantiate( bigExplosionPrefab, transform.position, transform.rotation ).GetComponent<ExplosionBehavior>();
+				newExplosion.MakeBigExplosion();
 			}
+			else
+			{
+				newExplosion = Instantiate( explosionPrefab, transform.position, transform.rotation ).GetComponent<ExplosionBehavior>();
+			}
+
+			newExplosion.SetExplosionPower( bulletDamage );
+
+			Destroy( gameObject );
+
 		}
 
 		if( collision.gameObject.tag == "DuplicatorTower" )
@@ -110,9 +115,7 @@ public class BulletBehavior : MonoBehaviour
 
 		if( collision.gameObject.tag == "StrBuffTower" )
 		{
-			print( bulletDamage );
 			bulletDamage += 40;
-			print( bulletDamage );
 		}
 
 		// Get the normal of the object we collided with
@@ -142,9 +145,9 @@ public class BulletBehavior : MonoBehaviour
 
 	}
 
-	public void MakeBomb()
+	public void MakeBigBomb()
 	{
-		isBomb = true;
+		isBigBomb = true;
 
 		// Change the appearance of the bullet
 		GetComponent<Renderer>().material.CopyPropertiesFromMaterial( bombMaterial );

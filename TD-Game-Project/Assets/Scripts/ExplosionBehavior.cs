@@ -8,6 +8,10 @@ public class ExplosionBehavior : MonoBehaviour
 	public float mediumPowerMultiplier	= 0.5f;
 	public float lowPowerMultiplier     = 0.2f;
 
+	private float fullPowerDistance		= 0.15f;
+	private float mediumPowerDistance	= 0.5f;
+	private float lowPowerDistance      = 0.7f;
+
 	// The power of the bullet that spawned the explosion
 	private float power	= 0.0f;
 
@@ -41,11 +45,11 @@ public class ExplosionBehavior : MonoBehaviour
 
 			float damageDealt;
 
-			if( distanceToCenter <= .15 )	// max damage
+			if( distanceToCenter <= fullPowerDistance )	// max damage
 			{
 				damageDealt = power * fullPowerMultiplier; 
 			}
-			else if( distanceToCenter < .6f )	//medium damage
+			else if( distanceToCenter < mediumPowerDistance )	//medium damage
 			{
 				damageDealt = power * mediumPowerMultiplier;
 			}
@@ -64,5 +68,12 @@ public class ExplosionBehavior : MonoBehaviour
 	public void SetExplosionPower( float bulletPower )
 	{
 		power = bulletPower;
+	}
+
+	public void MakeBigExplosion()
+	{
+		fullPowerDistance   *= 2f;
+		mediumPowerDistance	*= 2f;
+		lowPowerDistance    *= 2f;
 	}
 }

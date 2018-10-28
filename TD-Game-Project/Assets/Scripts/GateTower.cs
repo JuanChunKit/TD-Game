@@ -19,7 +19,7 @@ public class GateTower : MonoBehaviour {
 	{
 		if( other.gameObject.tag == "Bullet" )
 		{
-			other.gameObject.GetComponent<BulletBehavior>().MakeBomb();
+			other.gameObject.GetComponent<BulletBehavior>().MakeBigBomb();
 		}
 	}
 }
