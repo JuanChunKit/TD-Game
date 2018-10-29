@@ -64,7 +64,7 @@ public class EnemyBehavior : MonoBehaviour
 		if( health <= 0.0f )
 		{
 			// the enemy has taken fatal damage, kill him
-			//GameMaster.Instance.currentScore += 10;
+			WaveManager.Instance.EnemyDied();
 			Destroy( gameObject );
 		}
 	}

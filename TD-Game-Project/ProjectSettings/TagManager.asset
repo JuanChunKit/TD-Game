@@ -9,6 +9,7 @@ TagManager:
   - Enemy
   - DuplicatorTower
   - StrBuffTower
+  - SpawnManager
   layers:
   - Default
   - TransparentFX

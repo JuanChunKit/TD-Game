@@ -14,8 +14,6 @@ public class BulletBehavior : MonoBehaviour
 	public float bulletSpeed = 1.0f;
 	public bool printInfo = false;
 
-	// the position of the object in the y axis should never change
-	private float yPos;
 
 	private Vector3 direction;
 
@@ -32,17 +30,10 @@ public class BulletBehavior : MonoBehaviour
 	{
 		direction = transform.forward;
 
-		// Future task!!!
-		// Check that the bullet is always staying in it's starting y position
-		// The bullet should only move in the x and z planes
-		yPos = transform.position.y;
-
 		// destroy the bullet after x amount of time to prevent it from leaking memory
 		Destroy( gameObject, maxAliveTime );
 
 		initialBulletScale = transform.localScale.x;
-		print( initialBulletScale );
-		
 	}
 
 	// Update is called once per frame

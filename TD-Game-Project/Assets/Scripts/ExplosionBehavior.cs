@@ -41,7 +41,7 @@ public class ExplosionBehavior : MonoBehaviour
 			// Find out the distance between the enemy and the center of the explosion
 			float distanceToCenter = (enemyTransform.position - transform.position).magnitude;
 
-			print( distanceToCenter );
+			// print( distanceToCenter );
 
 			float damageDealt;
 
@@ -59,7 +59,7 @@ public class ExplosionBehavior : MonoBehaviour
 			}
 
 			enemyScript.TakeDamage( damageDealt );
-			print( damageDealt );
+			// print( damageDealt );
 
 		}
 

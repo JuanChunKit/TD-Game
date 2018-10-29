@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-
 	/*
 	phases for the game:
 	1) Place main tower
@@ -36,47 +35,135 @@ public class GameManager : MonoBehaviour
 		* Gives player option the option to play again or quit the game
 	*/
 
+	public GameObject dummyTurret;
+	public GameObject turret;
+
 	enum GamePhase { PlaceMainTower, Build, Combat, WinCondition, LoseCondition };
 	GamePhase currentPhase;
 	bool gamePhaseChanged;
 
+	public static GameManager Instance { get; private set; }
+
+	private void Awake()
+	{
+		Instance = this;
+	}
+
 	// Use this for initialization
 	void Start()
 	{
-		currentPhase = GamePhase.PlaceMainTower;
-		gamePhaseChanged = true;
+		ChangeGamePhase( GamePhase.PlaceMainTower );
 	}
 
 	// Update is called once per frame
 	void Update()
 	{
+		// This switch only happens once, when the game phase changes
 		if( gamePhaseChanged )
 		{
 			switch( currentPhase )
 			{
 			case GamePhase.PlaceMainTower:
 			{
+
+				gamePhaseChanged = false;
 				break;
 			}
 			case GamePhase.Build:
 			{
+				gamePhaseChanged = false;
+				break;
+			}
+			case GamePhase.Combat:
+			{
+					WaveManager.Instance.SpawnEnemy( 10 );
+				gamePhaseChanged = false;
 				break;
 			}
 			case GamePhase.WinCondition:
 			{
+				gamePhaseChanged = false;
 				break;
 			}
 			case GamePhase.LoseCondition:
 			{
+				gamePhaseChanged = false;
 				break;
 			}
 			default:
 			{
 				Debug.Log( "Error: GameManager.currentPhase set to an incorrect value" );
+				gamePhaseChanged = false;
 				break;
 			}
 			}
 		}
+
+		// this switch happens every frame
+		switch( currentPhase )
+		{
+		case GamePhase.PlaceMainTower:
+		{
+			// Generate a plane that intersects the transform's position with an upwards normal.
+			Plane groundPlane = new Plane( Vector3.up, transform.position );
+
+			// Generate a ray from the cursor position
+			Ray ray = Camera.main.ScreenPointToRay( Input.mousePosition );
+
+			// Determine the point where the cursor ray intersects the plane.
+			// Raycasting to a Plane object only gives us a distance, so we'll have to take the distance,
+			//   then find the point along that ray that meets that distance.  This will be the point
+			//   to spawn the turret
+			float hitDist = 0.0f;
+			Vector3 hitPoint = new Vector3( 0f, 0f, 0f );
+
+			if( groundPlane.Raycast( ray, out hitDist ) )
+			{
+				// Get the point along the ray that hits the calculated distance
+				hitPoint = ray.GetPoint( hitDist );
+				dummyTurret.transform.position = hitPoint;
+			}
+
+			if( Input.GetButtonUp( "Fire1" ) )
+			{
+				// de-activate the dummy turret game object and put the real tower in its position
+				dummyTurret.SetActive( false );
+				turret.transform.position = hitPoint;
+				// turret.SetActive( true );
+				ChangeGamePhase( GamePhase.Combat );
+			}
+
+
+			break;
+		}
+		case GamePhase.Build:
+		{
+			break;
+		}
+		case GamePhase.Combat:
+		{
+			
+			break;
+		}
+		case GamePhase.WinCondition:
+		{
+			break;
+		}
+		case GamePhase.LoseCondition:
+		{
+			break;
+		}
+		default:
+		{
+			break;
+		}
+		}
+	}
+
+	private void ChangeGamePhase( GamePhase newPhase )
+	{
+		currentPhase = newPhase;
+		gamePhaseChanged = true;
 	}
 
 	void PlaceMainTowerPhase()
@@ -87,6 +174,11 @@ public class GameManager : MonoBehaviour
 		// Ask the user to confirm the tower position
 
 
+	}
+
+	public void WaveEnded()
+	{
+		print( "WaveEnded" );
 	}
 
 	void StartBuildingPhase()
