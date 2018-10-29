@@ -47,14 +47,7 @@ public class EnemyBehavior : MonoBehaviour
 
 	private void OnCollisionEnter( Collision collision )
 	{
-		/*
-		if( collision.gameObject.tag == "Bullet" )
-		{
-			GameMaster.Instance.currentScore += 10;
-			print( GameMaster.Instance.currentScore );
-			Destroy( gameObject );
-		}
-		*/
+		
 	}
 
 	public void TakeDamage( float amount )

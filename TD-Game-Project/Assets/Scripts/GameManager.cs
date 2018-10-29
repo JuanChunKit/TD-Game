@@ -179,6 +179,16 @@ public class GameManager : MonoBehaviour
 	public void WaveEnded()
 	{
 		print( "WaveEnded" );
+
+		print( "New Wave starting in 5 seconds..." );
+
+		StartCoroutine( TemporaryWaveRestart() );
+	}
+
+	IEnumerator TemporaryWaveRestart()
+	{
+		yield return new WaitForSeconds( 5 );
+		ChangeGamePhase( GamePhase.Combat );
 	}
 
 	void StartBuildingPhase()
