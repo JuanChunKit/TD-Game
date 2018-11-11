@@ -13,7 +13,7 @@ public class EnemyBehavior : MonoBehaviour
 	public float enemyOffset = 1.0f;
 
 	private Vector3 targetLocation;
-	public float health;
+	public float health = 100.0f;
 
 	// Use this for initialization
 	void Start()
@@ -24,7 +24,6 @@ public class EnemyBehavior : MonoBehaviour
 		transform.position = new Vector3( transform.position.x, groundOffset, transform.position.z );
 		targetLocation.y = groundOffset;
 
-		health = 100.0f;
 
 		// (task) Rotate the enemy to face the target
 	}
@@ -56,8 +55,8 @@ public class EnemyBehavior : MonoBehaviour
 
 		if( health <= 0.0f )
 		{
-			// the enemy has taken fatal damage, kill him
-			WaveManager.Instance.EnemyDied();
+			// the enemy has taken fatal damage, terminate it
+			SpawnManager.Instance.EnemyDied();
 			Destroy( gameObject );
 		}
 	}

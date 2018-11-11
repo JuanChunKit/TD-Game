@@ -76,8 +76,11 @@ public class GameManager : MonoBehaviour
 			}
 			case GamePhase.Combat:
 			{
-					WaveManager.Instance.SpawnEnemy( 10 );
+				// WaveManager.Instance.SpawnEnemy( 5 );
 				gamePhaseChanged = false;
+					44
+				SpawnManager.Instance.SpawnFormations( 3 );
+				
 				break;
 			}
 			case GamePhase.WinCondition:
