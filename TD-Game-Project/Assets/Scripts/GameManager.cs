@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour
 			{
 				// WaveManager.Instance.SpawnEnemy( 5 );
 				gamePhaseChanged = false;
-					44
+					
 				SpawnManager.Instance.SpawnFormations( 3 );
 				
 				break;
