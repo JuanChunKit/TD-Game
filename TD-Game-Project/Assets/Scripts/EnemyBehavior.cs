@@ -20,14 +20,18 @@ public class EnemyBehavior : MonoBehaviour
 	private float attackCooldownTimer;
 	private bool isAttacking = false;
 
-	private bool stopMoving = false;
-
 	private Tower towerToAttack = null;
 
 	private List<GameObject> obstacles;
 
 	[SerializeField]
 	private float attackPower = 5.0f;
+
+	[SerializeField]
+	private bool logDebugInfo = false;
+
+	public int obsCount = 0;
+	public int itemsInObs = 0;
 
 	// Use this for initialization
 	void Start()
@@ -52,20 +56,8 @@ public class EnemyBehavior : MonoBehaviour
 
 		if( isAttacking && towerToAttack == null )
 		{
-			stopMoving = false;
 			isAttacking = false;
 			Debug.Log( "enemy defeated, glory to Arstotzka" );
-		}
-
-		if( stopMoving == false )
-		{
-			// move movement code here
-			// Check if the enemy is within x distance of the target
-			// If the enemy has reached that distance, stop moving
-			if( (transform.position - targetLocation).magnitude > enemyOffset )
-			{
-				transform.position = Vector3.MoveTowards( transform.position, targetLocation, speed * Time.deltaTime );
-			}
 		}
 
 		if( isAttacking )
@@ -73,6 +65,34 @@ public class EnemyBehavior : MonoBehaviour
 			attackCooldownTimer -= Time.deltaTime;
 		}
 
+
+		if( obstacles.Count > 0 )
+		{
+			// Remove gameObjects that have been deleted
+			for( int i = (obstacles.Count - 1); i > -1; i-- )
+			{
+				if( obstacles[ i ] == null )
+				{
+					obstacles.RemoveAt( i );
+					obsCount -= 1;
+					if( logDebugInfo )
+					{
+						Debug.Log( "(obstacles - 1) an obstacle dissapeared!" );
+						Debug.Log( "obstacles remaining: " + obstacles.Count );
+					}
+				}
+
+			}
+		}
+		else
+		{
+			if( (transform.position - targetLocation).magnitude > enemyOffset )
+			{
+				transform.position = Vector3.MoveTowards( transform.position, targetLocation, speed * Time.deltaTime );
+			}
+		}
+
+		itemsInObs = obstacles.Count;
 	}
 
 	private void OnCollisionEnter( Collision collision )
@@ -80,6 +100,42 @@ public class EnemyBehavior : MonoBehaviour
 
 	}
 
+	/// <Better movement control>
+	/// Stop relaying on stopMoving bool to know when to stop moving
+	/// Use a list instead to determmine when there are no longer obstacles
+	/// </summary>
+	/// <param name="other"></param>
+
+	private void OnTriggerEnter( Collider other )
+	{
+		if( other.gameObject.tag == "DuplicatorTower" ||
+			other.gameObject.tag == "GateTower" ||
+			other.gameObject.tag == "DamageBuffTower" )
+		{
+			isAttacking = true;
+
+			towerToAttack = other.gameObject.GetComponent<Tower>();
+
+
+			obstacles.Add( other.gameObject );
+			obsCount += 1;
+			if( logDebugInfo )
+			{
+				Debug.Log( "(obstacles + 1) Attacking tower" );
+				Debug.Log( "obstacles remaining: " + obstacles.Count );
+			}
+		}
+		else if( other.gameObject.tag == "Enemy" )
+		{
+			obstacles.Add( other.gameObject );
+			obsCount += 1;
+			if( logDebugInfo )
+			{
+				Debug.Log( "(obstacles + 1) Comrade is blocking me" );
+				Debug.Log( "obstacles remaining: " + obstacles.Count );
+			}
+		}
+	}
 
 	private void OnTriggerStay( Collider other )
 	{
@@ -93,48 +149,29 @@ public class EnemyBehavior : MonoBehaviour
 			if( attackCooldownTimer <= 0.0f )
 			{
 				attackCooldownTimer = attackCooldown;
-				
-				Tower towerToAttack = other.gameObject.GetComponent<Tower>();
-				if( towerToAttack != null )
+
+				Tower toAttack = other.gameObject.GetComponent<Tower>();
+				if( toAttack != null )
 				{
-					towerToAttack.TakeDamage( attackPower );
+					toAttack.TakeDamage( attackPower );
 				}
 			}
-
-			stopMoving = true;
 		}
-		//else if( other.gameObject.tag == "Enemy" )
-		//{
-		//	stopMoving = true;
-		//}
-
 	}
 
-	private void OnTriggerEnter( Collider other )
+	private void OnTriggerExit( Collider other )
 	{
-		if( other.gameObject.tag == "DuplicatorTower" ||
-			other.gameObject.tag == "GateTower" ||
-			other.gameObject.tag == "DamageBuffTower" )
+		if( other.gameObject.tag == "Enemy" )
 		{
-			stopMoving = true;
-			isAttacking = true;
-
-			towerToAttack = other.gameObject.GetComponent<Tower>();
-			// obstacles.Add( other.gameObject )
+			obstacles.Remove( other.gameObject );
+			obsCount -= 1;
+			if( logDebugInfo )
+			{
+				Debug.Log( "(obstacles - 1) Comrade got out of the way" );
+				Debug.Log( "obstacles remaining: " + obstacles.Count );
+			}
 		}
-		//else if( other.gameObject.tag == "Enemy" )
-		//{
-		//	stopMoving = true;
-		//}
 	}
-
-	//private void OnTriggerExit( Collider other )
-	//{
-	//	if( other.gameObject.tag == "Enemy" )
-	//	{
-	//		stopMoving = false;
-	//	}
-	//}
 
 	public void TakeDamage( float amount )
 	{

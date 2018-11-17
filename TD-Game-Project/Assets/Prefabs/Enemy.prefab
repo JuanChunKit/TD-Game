@@ -39,7 +39,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1412171786474892}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0.73, y: 0.3, z: 0}
+  m_LocalPosition: {x: -1.6085243, y: 0, z: 0.8983033}
   m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_Children: []
   m_Father: {fileID: 0}
@@ -112,8 +112,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.6, y: 0.25, z: 0.47940233}
-  m_Center: {x: 0, y: 0, z: 0.7397011}
+  m_Size: {x: 0.3, y: 0.25, z: 0.3110669}
+  m_Center: {x: 0, y: 0, z: 0.6555334}
 --- !u!114 &114440113421142288
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -129,8 +129,11 @@ MonoBehaviour:
   groundOffset: 0.3
   enemyOffset: 0.6
   health: 100
-  attackCooldown: 10
-  attackPower: 5
+  attackCooldown: 3
+  attackPower: 50
+  logDebugInfo: 0
+  obsCount: 0
+  itemsInObs: 0
 --- !u!136 &136404147387178250
 CapsuleCollider:
   m_ObjectHideFlags: 1
