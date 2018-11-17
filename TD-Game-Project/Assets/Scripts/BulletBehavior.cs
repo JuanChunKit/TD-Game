@@ -104,7 +104,7 @@ public class BulletBehavior : MonoBehaviour
 			}
 		}
 
-		if( collision.gameObject.tag == "StrBuffTower" )
+		if( collision.gameObject.tag == "DamageBuffTower" )
 		{
 			bulletDamage += 40;
 		}

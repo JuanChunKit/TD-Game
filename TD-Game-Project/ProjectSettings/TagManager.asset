@@ -8,8 +8,9 @@ TagManager:
   - Bullet
   - Enemy
   - DuplicatorTower
-  - StrBuffTower
   - SpawnManager
+  - GateTower
+  - DamageBuffTower
   layers:
   - Default
   - TransparentFX

@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GateTower : Tower {
+public class DamageBuffTower : Tower
+{
 
 	protected override void Awake()
 	{
@@ -14,13 +15,5 @@ public class GateTower : Tower {
 	{
 		base.Update();
 
-	}
-
-	private void OnTriggerEnter( Collider other )
-	{
-		if( other.gameObject.tag == "Bullet" )
-		{
-			other.gameObject.GetComponent<BulletBehavior>().MakeBigBomb();
-		}
 	}
 }

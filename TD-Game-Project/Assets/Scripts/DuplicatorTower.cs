@@ -2,31 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DuplicatorTower : MonoBehaviour {
+public class DuplicatorTower : Tower
+{
 
 	public GameObject bulletPrefab;
 
-	public Transform spawnPosition0;
-	public Transform spawnPosition1;
-	public Transform spawnPosition2;
-
 	public float towerRadius = 0.5f;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+	protected override void Awake()
+	{
+		base.Awake();
 	}
 
-	public void SpawnBullets()
+	// Update is called once per frame
+	protected override void Update()
 	{
-		Instantiate( bulletPrefab, spawnPosition0.position, spawnPosition0.rotation ).GetComponent<BulletBehavior>().isClone = true ;
-		Instantiate( bulletPrefab, spawnPosition1.position, spawnPosition1.rotation ).GetComponent<BulletBehavior>().isClone = true;
-		Instantiate( bulletPrefab, spawnPosition2.position, spawnPosition2.rotation ).GetComponent<BulletBehavior>().isClone = true;
+		base.Update();
 
 	}
 
