@@ -32,8 +32,18 @@ public class MainTower : MonoBehaviour
 
 	public Rigidbody mainBulletPrefab;
 
-	
-    private void Start()
+	private bool canShoot = false;
+
+	[SerializeField]
+	private float coolDown = .25f;
+	private float coolDownTimer;
+
+	private void Awake()
+	{
+		coolDownTimer = coolDown;
+	}
+
+	private void Start()
     {
 		currentShot = CurrentShot.none;
 		shotTime = 0.0f;
@@ -43,57 +53,77 @@ public class MainTower : MonoBehaviour
 
 	private void Update()
 	{
-		if( Input.GetButtonDown( "Fire1" ) )
+		coolDownTimer -= Time.deltaTime;
+
+		if( canShoot && coolDownTimer < 0.0f )
 		{
-			isChargingShot = true;
+			if( Input.GetButton( "Fire1" ) )
+			{
+				shotTime += Time.deltaTime;
+
+				if( currentShot != CurrentShot.strong )
+				{
+					if( shotTime < beforeOptimalTime )
+					{
+						if( currentShot != CurrentShot.weak )
+						{
+							GetComponent<Renderer>().material.CopyPropertiesFromMaterial( weakShotColor );
+							currentShot = CurrentShot.weak;
+							//Debug.Log( "weak" );
+						}
+					}
+					else if( shotTime > afterOptimalTime )
+					{
+						// Once we get to this point we don't need to update the color anymore until the player shoots
+						// and starts charging their shot again
+						GetComponent<Renderer>().material.CopyPropertiesFromMaterial( strongShotColor );
+						currentShot = CurrentShot.strong;
+						//Debug.Log( "strong" );
+					}
+					else
+					{
+						if( currentShot != CurrentShot.normal )
+						{
+							GetComponent<Renderer>().material.CopyPropertiesFromMaterial( normalShotColor );
+							currentShot = CurrentShot.normal;
+							//Debug.Log( "normal" );
+						}
+					}
+				}
+			}
+
+			if( Input.GetButtonUp( "Fire1" ) )
+			{
+				FireMainBullet();
+				shotTime = 0.0f;
+				isChargingShot = false;
+
+				coolDownTimer = coolDown;
+
+				// return the tower the the idle color
+				GetComponent<Renderer>().material.CopyPropertiesFromMaterial( restingColor );
+				currentShot = CurrentShot.none;
+			}
 		}
 
 		if( isChargingShot )
 		{
-			shotTime += Time.deltaTime;
-
-			if( currentShot != CurrentShot.strong )
-			{
-				if( shotTime < beforeOptimalTime )
-				{
-					if( currentShot != CurrentShot.weak )
-					{
-						GetComponent<Renderer>().material.CopyPropertiesFromMaterial( weakShotColor );
-						currentShot = CurrentShot.weak;
-						//Debug.Log( "weak" );
-					}
-				}
-				else if( shotTime > afterOptimalTime )
-				{
-					// Once we get to this point we don't need to update the color anymore until the player shoots
-					// and starts charging their shot again
-					GetComponent<Renderer>().material.CopyPropertiesFromMaterial( strongShotColor );
-					currentShot = CurrentShot.strong;
-					//Debug.Log( "strong" );
-				}
-				else
-				{
-					if( currentShot != CurrentShot.normal )
-					{
-						GetComponent<Renderer>().material.CopyPropertiesFromMaterial( normalShotColor );
-						currentShot = CurrentShot.normal;
-						//Debug.Log( "normal" );
-					}
-				}
-			}
+			
 		}
 
-		if( Input.GetButtonUp( "Fire1" ) )
-		{
-			FireMainBullet();
-			shotTime = 0.0f;
-			isChargingShot = false;
+		
 
-			// return the tower the the idle color
-			GetComponent<Renderer>().material.CopyPropertiesFromMaterial( restingColor );
-			currentShot = CurrentShot.none;
-		}
+	}
 
+	// Stop the turret from shooting
+	public void SafetyOn( )
+	{
+		canShoot = false;
+	}
+
+	public void SafetyOff()
+	{
+		canShoot = true;
 	}
 
 	void FixedUpdate()

@@ -42,6 +42,7 @@ public class GameManager : MonoBehaviour
 	GamePhase currentPhase;
 	bool gamePhaseChanged;
 
+
 	public static GameManager Instance { get; private set; }
 
 	private void Awake()
@@ -61,105 +62,101 @@ public class GameManager : MonoBehaviour
 		// This switch only happens once, when the game phase changes
 		if( gamePhaseChanged )
 		{
+			gamePhaseChanged = false;
+
 			switch( currentPhase )
 			{
-			case GamePhase.PlaceMainTower:
-			{
+				case GamePhase.PlaceMainTower:
+				{
+					break;
+				}
+				case GamePhase.Build:
+				{
+					BuildPhase.Instance.StartBuildPhase();
+					break;
+				}
+				case GamePhase.Combat:
+				{
+					// WaveManager.Instance.SpawnEnemy( 5 );
 
-				gamePhaseChanged = false;
-				break;
-			}
-			case GamePhase.Build:
-			{
-				gamePhaseChanged = false;
-				break;
-			}
-			case GamePhase.Combat:
-			{
-				// WaveManager.Instance.SpawnEnemy( 5 );
-				gamePhaseChanged = false;
-					
-				SpawnManager.Instance.SpawnFormations( 3 );
-				
-				break;
-			}
-			case GamePhase.WinCondition:
-			{
-				gamePhaseChanged = false;
-				break;
-			}
-			case GamePhase.LoseCondition:
-			{
-				gamePhaseChanged = false;
-				break;
-			}
-			default:
-			{
-				Debug.Log( "Error: GameManager.currentPhase set to an incorrect value" );
-				gamePhaseChanged = false;
-				break;
-			}
+					SpawnManager.Instance.SpawnFormations( 3 );
+
+					break;
+				}
+				case GamePhase.WinCondition:
+				{
+					break;
+				}
+				case GamePhase.LoseCondition:
+				{
+					break;
+				}
+				default:
+				{
+					Debug.Log( "Error: GameManager.currentPhase set to an incorrect value" );
+					break;
+				}
 			}
 		}
 
 		// this switch happens every frame
 		switch( currentPhase )
 		{
-		case GamePhase.PlaceMainTower:
-		{
-			// Generate a plane that intersects the transform's position with an upwards normal.
-			Plane groundPlane = new Plane( Vector3.up, transform.position );
-
-			// Generate a ray from the cursor position
-			Ray ray = Camera.main.ScreenPointToRay( Input.mousePosition );
-
-			// Determine the point where the cursor ray intersects the plane.
-			// Raycasting to a Plane object only gives us a distance, so we'll have to take the distance,
-			//   then find the point along that ray that meets that distance.  This will be the point
-			//   to spawn the turret
-			float hitDist = 0.0f;
-			Vector3 hitPoint = new Vector3( 0f, 0f, 0f );
-
-			if( groundPlane.Raycast( ray, out hitDist ) )
+			case GamePhase.PlaceMainTower:
 			{
-				// Get the point along the ray that hits the calculated distance
-				hitPoint = ray.GetPoint( hitDist );
-				dummyTurret.transform.position = hitPoint;
-			}
+				// Generate a plane that intersects the transform's position with an upwards normal.
+				Plane groundPlane = new Plane( Vector3.up, transform.position );
 
-			if( Input.GetButtonUp( "Fire1" ) )
+				// Generate a ray from the cursor position
+				Ray ray = Camera.main.ScreenPointToRay( Input.mousePosition );
+
+				// Determine the point where the cursor ray intersects the plane.
+				// Raycasting to a Plane object only gives us a distance, so we'll have to take the distance,
+				//   then find the point along that ray that meets that distance.  This will be the point
+				//   to spawn the turret
+				float hitDist = 0.0f;
+				Vector3 hitPoint = new Vector3( 0f, 0f, 0f );
+
+				if( groundPlane.Raycast( ray, out hitDist ) )
+				{
+					// Get the point along the ray that hits the calculated distance
+					hitPoint = ray.GetPoint( hitDist );
+					dummyTurret.transform.position = hitPoint;
+				}
+
+				if( Input.GetButtonUp( "Fire1" ) )
+				{
+					// de-activate the dummy turret game object and put the real tower in its position
+					dummyTurret.SetActive( false );
+					turret.transform.position = hitPoint;
+					// turret.SetActive( true );
+					ChangeGamePhase( GamePhase.Build );
+				}
+
+
+				break;
+			}
+			case GamePhase.Build:
 			{
-				// de-activate the dummy turret game object and put the real tower in its position
-				dummyTurret.SetActive( false );
-				turret.transform.position = hitPoint;
-				// turret.SetActive( true );
-				ChangeGamePhase( GamePhase.Combat );
+				break;
 			}
+			case GamePhase.Combat:
+			{
 
-
-			break;
-		}
-		case GamePhase.Build:
-		{
-			break;
-		}
-		case GamePhase.Combat:
-		{
-			
-			break;
-		}
-		case GamePhase.WinCondition:
-		{
-			break;
-		}
-		case GamePhase.LoseCondition:
-		{
-			break;
-		}
-		default:
-		{
-			break;
-		}
+				break;
+			}
+			case GamePhase.WinCondition:
+			{
+				break;
+			}
+			case GamePhase.LoseCondition:
+			{
+				break;
+			}
+			default:
+			{
+				break;
+			}
 		}
 	}
 
@@ -199,9 +196,12 @@ public class GameManager : MonoBehaviour
 
 	}
 
-	void EndBuildingPhase()
+	public void EndBuildingPhase()
 	{
-
+		ChangeGamePhase( GamePhase.Combat );
+		MainTower theTurret = turret.GetComponentInChildren<MainTower>();
+		if( theTurret )
+			theTurret.SafetyOff();
 	}
 
 	void StartWave()

@@ -33,6 +33,7 @@ public class EnemyBehavior : MonoBehaviour
 	public int obsCount = 0;
 	public int itemsInObs = 0;
 
+
 	// Use this for initialization
 	void Start()
 	{
@@ -95,10 +96,6 @@ public class EnemyBehavior : MonoBehaviour
 		itemsInObs = obstacles.Count;
 	}
 
-	private void OnCollisionEnter( Collision collision )
-	{
-
-	}
 
 	/// <Better movement control>
 	/// Stop relaying on stopMoving bool to know when to stop moving
@@ -184,4 +181,5 @@ public class EnemyBehavior : MonoBehaviour
 			Destroy( gameObject );
 		}
 	}
+
 }
